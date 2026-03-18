@@ -67,11 +67,9 @@ CollectorArchive(entryid, category, villageid, personid, estimated_value, rarity
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <manipulate-scene>
-            <text>Mission 5: Predicting the Next Acquisition -&#x3E; Jo&#xEB;l
+            <text>Mission 5: Updating the records with the next Acquisition.
 
-The Collector wants to see which entry comes next in each category, according to the record date. Because there is a empty column in the records for a key pointing to the next item, SQLaus wants to put that information into said column, named next_entryid.
-
-display the acquisitions in chronological order and display the name of the next item in the same row. For ea
+The Collector wants to see which entry comes next in each category, according to the record date. Because there is an empty column in the records for a key pointing to the next item, SQLaus wants to add said information into the concerning column named next_entryid.
 
 Tables: CollectorArchive (new), Inhabitant, Village
 Functions: LEAD() with PARTITION BY, ORDER BY</text>
@@ -107,7 +105,36 @@ To show how a category developed over time, the Collector asks for every archive
 
 Tables: CollectorArchive (new), Inhabitant, Village
 Functions: FIRST_VALUE(), LAST_VALUE() with PARTITION BY, ORDER BY</text>
-            <sql-solution></sql-solution>
+            <sql-solution>
+WITH cat_first_last AS (
+    SELECT DISTINCT
+        category,
+
+        FIRST_VALUE(entryid) OVER (
+            PARTITION BY category ORDER BY recorded_day
+            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+        ) AS first_entryid,
+
+        LAST_VALUE(entryid) OVER (
+            PARTITION BY category ORDER BY recorded_day
+            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+            ) AS last_entryid
+
+    FROM CollectorArchive
+)
+SELECT
+    cfl.category,
+    ca_first.description,
+    ca_first.recorded_day,
+    ca_first.estimated_value,
+    ca_last.description,
+    ca_last.recorded_day,
+    ca_last.estimated_value
+FROM cat_first_last AS cfl
+INNER JOIN  CollectorArchive AS ca_first        on cfl.first_entryid = ca_first.entryid
+INNER JOIN  CollectorArchive AS ca_last         on cfl.last_entryid = ca_last.entryid
+;
+</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
