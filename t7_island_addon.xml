@@ -30,7 +30,7 @@ The Collector first wants a stable archive order. SQLaus must assign a sequentia
 
 Tables: Inhabitant, Village
 Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
-            <sql-solution></sql-solution>
+            <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
@@ -40,7 +40,7 @@ The Collector wants a global prestige ranking of all inhabitants by gold. If two
 
 Tables: Inhabitant, Village
 Functions: RANK() with ORDER BY</text>
-            <sql-solution></sql-solution>
+            <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
@@ -50,7 +50,7 @@ For a cleaner public exhibition, the Collector wants inhabitants ranked by gold 
 
 Tables: Inhabitant, Village
 Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
-            <sql-solution></sql-solution>
+            <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
@@ -63,19 +63,43 @@ Functions: LAG() with PARTITION BY, ORDER BY
 
 new table:
 CollectorArchive(entryid, category, villageid, personid, estimated_value, rarity_score, recorded_day)</text>
-            <sql-solution></sql-solution>
+            <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
+        <manipulate-scene>
             <text>Mission 5: Predicting the Next Acquisition -&#x3E; Jo&#xEB;l
 
-The Collector wants to see which entry comes next in each category. SQLaus must display the following acquisition in chronological order for every current archive entry.
+The Collector wants to see which entry comes next in each category, according to the record date. Because there is a empty column in the records for a key pointing to the next item, SQLaus wants to put that information into said column, named next_entryid.
+
+display the acquisitions in chronological order and display the name of the next item in the same row. For ea
 
 Tables: CollectorArchive (new), Inhabitant, Village
 Functions: LEAD() with PARTITION BY, ORDER BY</text>
-            <sql-solution></sql-solution>
+            <sql-solution>WITH next_entries AS (
+    SELECT
+        entryid,
+        LEAD(entryid) OVER (PARTITION BY category ORDER BY recorded_day) AS next_entryid
+    FROM CollectorArchive
+)
+UPDATE CollectorArchive ca
+SET next_entryid = ne.next_entryid
+FROM next_entries ne
+WHERE ca.entryid = ne.entryid;</sql-solution>
+            <sql-check>WITH next_entries AS (
+    SELECT
+        entryid,
+        LEAD(entryid) OVER (PARTITION BY category ORDER BY recorded_day) AS next_entryid
+    FROM CollectorArchive
+)
+
+SELECT
+&#x9;ca.entryid,
+    ca.next_entryid
+FROM CollectorArchive ca
+INNER JOIN next_entries ne on ca.entryid = ne.entryid
+where ca.next_entryid = ne.next_entryid;</sql-check>
             <sql-placeholder></sql-placeholder>
-        </select-scene>
+        </manipulate-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 6: First Relic and Latest Relic -&#x3E; Jo&#xEB;l
 
@@ -141,7 +165,10 @@ CREATE TABLE CollectorArchive (
     rarity_score INTEGER NOT NULL CHECK (rarity_score BETWEEN 1 AND 3),
     estimated_value INTEGER NOT NULL,
     recorded_day DATE NOT NULL,
-    description TEXT NOT NULL
+    description TEXT NOT NULL,
+    next_entryid INTEGER NULL
+        REFERENCES CollectorArchive(entryid)
+        DEFAULT NULL
 );
 
 INSERT INTO Village (name, chief)
@@ -186,21 +213,21 @@ VALUES
 
 INSERT INTO CollectorArchive (villageid, personid, category, rarity_score, estimated_value, recorded_day, description)
 VALUES
-(3, 2, &#x27;tool&#x27;, 2, 310, &#x27;2019-03-12&#x27;, &#x27;Worn blacksmith hammer&#x27;),
-(2, 19, &#x27;tool&#x27;, 3, 870, &#x27;2021-07-08&#x27;, &#x27;Engraved butcher cleaver&#x27;),
-(3, 18, &#x27;tool&#x27;, 1, 130, &#x27;2024-06-20&#x27;, &#x27;Oversized iron bellows&#x27;),
-(1, 1, &#x27;consumeable&#x27;, 1, 60, &#x27;2018-02-14&#x27;, &#x27;Sealed honey jar&#x27;),
 (3, 11, &#x27;consumeable&#x27;, 1, 40, &#x27;2019-11-03&#x27;, &#x27;Dried island herbs&#x27;),
-(2, 6, &#x27;consumeable&#x27;, 2, 220, &#x27;2021-04-19&#x27;, &#x27;Wax-sealed sausage&#x27;),
-(3, 13, &#x27;consumeable&#x27;, 3, 750, &#x27;2023-08-30&#x27;, &#x27;Rare ink vial&#x27;),
-(1, 3, &#x27;consumeable&#x27;, 2, 175, &#x27;2025-01-10&#x27;, &#x27;Spiced rye loaf&#x27;),
-(2, 8, &#x27;clothing&#x27;, 2, 390, &#x27;2018-09-27&#x27;, &#x27;Brass-buttoned coat&#x27;),
-(1, 16, &#x27;clothing&#x27;, 3, 940, &#x27;2020-12-15&#x27;, &#x27;Deep violet cloak&#x27;),
 (3, 14, &#x27;clothing&#x27;, 1, 115, &#x27;2022-05-22&#x27;, &#x27;Leather smith apron&#x27;),
 (2, 15, &#x27;clothing&#x27;, 2, 480, &#x27;2024-08-09&#x27;, &#x27;Fine dealer gloves&#x27;),
-(1, 4, &#x27;trinket&#x27;, 1, 80, &#x27;2018-06-25&#x27;, &#x27;Carved merchant seal&#x27;),
+(3, 13, &#x27;consumeable&#x27;, 3, 750, &#x27;2023-08-30&#x27;, &#x27;Rare ink vial&#x27;),
+(2, 8, &#x27;clothing&#x27;, 2, 390, &#x27;2018-09-27&#x27;, &#x27;Brass-buttoned coat&#x27;),
+(1, 16, &#x27;clothing&#x27;, 3, 940, &#x27;2020-12-15&#x27;, &#x27;Deep violet cloak&#x27;),
+(3, 18, &#x27;tool&#x27;, 1, 130, &#x27;2024-06-20&#x27;, &#x27;Oversized iron bellows&#x27;),
 (3, 5, &#x27;trinket&#x27;, 2, 340, &#x27;2020-03-11&#x27;, &#x27;Tarnished cane grip&#x27;),
+(2, 6, &#x27;consumeable&#x27;, 2, 220, &#x27;2021-04-19&#x27;, &#x27;Wax-sealed sausage&#x27;),
+(2, 19, &#x27;tool&#x27;, 3, 870, &#x27;2021-07-08&#x27;, &#x27;Engraved butcher cleaver&#x27;),
 (2, 12, &#x27;trinket&#x27;, 3, 810, &#x27;2022-10-04&#x27;, &#x27;Amber origin pendant&#x27;),
+(1, 4, &#x27;trinket&#x27;, 1, 80, &#x27;2018-06-25&#x27;, &#x27;Carved merchant seal&#x27;),
+(1, 1, &#x27;consumeable&#x27;, 1, 60, &#x27;2018-02-14&#x27;, &#x27;Sealed honey jar&#x27;),
+(3, 17, &#x27;trinket&#x27;, 1, 95, &#x27;2025-02-02&#x27;, &#x27;Knotted rope token&#x27;),
+(1, 3, &#x27;consumeable&#x27;, 2, 175, &#x27;2025-01-10&#x27;, &#x27;Spiced rye loaf&#x27;),
 (1, 9, &#x27;trinket&#x27;, 2, 260, &#x27;2023-04-17&#x27;, &#x27;Engraved brass cup&#x27;),
-(3, 17, &#x27;trinket&#x27;, 1, 95, &#x27;2025-02-02&#x27;, &#x27;Knotted rope token&#x27;);</initial-sql-script>
+(3, 2, &#x27;tool&#x27;, 2, 310, &#x27;2019-03-12&#x27;, &#x27;Worn blacksmith hammer&#x27;);</initial-sql-script>
 </game>
