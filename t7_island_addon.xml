@@ -69,10 +69,7 @@ CollectorArchive(entryid, category, villageid, personid, estimated_value, rarity
         <manipulate-scene>
             <text>Mission 5: Updating the records with the next Acquisition.
 
-The Collector wants to see which entry comes next in each category, according to the record date. Because there is an empty column in the records for a key pointing to the next item, SQLaus wants to add said information into the concerning column named next_entryid.
-
-Tables: CollectorArchive (new), Inhabitant, Village
-Functions: LEAD() with PARTITION BY, ORDER BY</text>
+The Collector wants to see which entry comes next in each category, according to the record date. Because there is an empty column in the records for a key pointing to the next item, SQLaus wants to add said information into the concerning column named next_entryid.</text>
             <sql-solution>WITH next_entries AS (
     SELECT
         entryid,
@@ -103,10 +100,15 @@ where ca.next_entryid = ne.next_entryid;</sql-check>
 
 To show how a category developed over time, the Collector asks for every archive row to be displayed together with the first recorded value and the latest recorded value of its category.
 
-Tables: CollectorArchive (new), Inhabitant, Village
-Functions: FIRST_VALUE(), LAST_VALUE() with PARTITION BY, ORDER BY</text>
-            <sql-solution>
-WITH cat_first_last AS (
+Display the following columns:
+- category
+- first_description
+- first_recorded_day
+- first_estimated_value
+- last_description
+- last_recorded_day
+- last_estimated_value</text>
+            <sql-solution>WITH cat_first_last AS (
     SELECT DISTINCT
         category,
 
@@ -124,17 +126,16 @@ WITH cat_first_last AS (
 )
 SELECT
     cfl.category,
-    ca_first.description,
-    ca_first.recorded_day,
-    ca_first.estimated_value,
-    ca_last.description,
-    ca_last.recorded_day,
-    ca_last.estimated_value
+    ca_first.description AS first_description,
+    ca_first.recorded_day AS first_recorded_day,
+    ca_first.estimated_value AS first_estimated_value,
+    ca_last.description AS last_description,
+    ca_last.recorded_day AS last_recorded_day,
+    ca_last.estimated_value AS last_estimated_value
 FROM cat_first_last AS cfl
 INNER JOIN  CollectorArchive AS ca_first        on cfl.first_entryid = ca_first.entryid
 INNER JOIN  CollectorArchive AS ca_last         on cfl.last_entryid = ca_last.entryid
-;
-</sql-solution>
+;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
@@ -144,12 +145,12 @@ The Collector considers the third-highest rarity_score in each category to be th
 
 Tables: CollectorArchive (new), Inhabitant, Village
 Functions: NTH_VALUE() with PARTITION BY, ORDER BY</text>
-            <sql-solution></sql-solution>
+            <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 8: TBD -&#x3E; Lana</text>
-            <sql-solution></sql-solution>
+            <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <text-scene>
