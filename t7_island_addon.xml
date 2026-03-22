@@ -2,260 +2,347 @@
 <game>
     <head>
         <title>t7_test</title>
-        <teaser>Insert teaser here</teaser>
-        <copyright>&#xA9; Insert copyright here</copyright>
+        <teaser>Window functions on SQL Island</teaser>
+        <copyright>&#xA9; SQL Island addon</copyright>
     </head>
     <scenes>
         <text-scene>
-            <text>Life on SQL Island had become almost predictable. SQLaus knew the roads between the villages, the villagers knew his face, and the island&#x2019;s tables had become familiar enough to feel trustworthy.</text>
+            <text>Life on SQL Island had become almost predictable. SQLaus knew the roads between
+                the villages, the villagers knew his face, and the island&#x2019;s tables had become
+                familiar enough to feel trustworthy.</text>
         </text-scene>
         <text-scene>
-            <text>That routine changed one morning when several sealed crates and wrapped bundles of documents were discovered at the shore near Onionville. No ship had been seen during the night, and no villager claimed to know where the delivery had come from. Yet the contents were unmistakably deliberate: copied ledgers, valuation lists, and carefully structured catalogue fragments connected to a collector of rare objects.</text>
+            <text>That routine changed one morning when several sealed crates and wrapped bundles of
+                documents were discovered at the shore near Onionville. No ship had been seen during
+                the night, and no villager claimed to know where the delivery had come from. Yet the
+                contents were unmistakably deliberate: copied ledgers, valuation lists, and
+                carefully structured catalogue fragments connected to a collector of rare objects.</text>
         </text-scene>
         <text-scene>
-            <text>&#x201C;These are not ordinary island records,&#x201D; SQLaus said after reading the first few pages.
-A short note accompanied the archive material: &#x201C;A true collection is not merely counted. It is ordered.&#x201D;
-The signature identified the sender simply as the Collector.</text>
+            <text>&#x201C;These are not ordinary island records,&#x201D; SQLaus said after reading
+                the first few pages.
+                A short note accompanied the archive material: &#x201C;A true collection is not
+                merely counted. It is ordered.&#x201D;
+                The signature identified the sender simply as the Collector.</text>
         </text-scene>
         <text-scene>
-            <text>The message was short but the material itself revealed a very clear intention. Certain inhabitants had been marked as unusually interesting, some villages appeared repeatedly in the records, while others were mentioned only in passing. As SQLaus read further, he realized that the archive was not designed to produce simple totals, but to preserve order, rarity, and relative position. Some entries had to be ranked within categories, others compared to earlier or later acquisitions, and several only became meaningful when viewed in the context of the records around them. A summarized result would have hidden exactly the structure that made the archive valuable.
+            <text>The message was short but the material itself revealed a very clear intention.
+                Certain inhabitants had been marked as unusually interesting, some villages appeared
+                repeatedly in the records, while others were mentioned only in passing. As SQLaus
+                read further, he realized that the archive was not designed to produce simple
+                totals, but to preserve order, rarity, and relative position. Some entries had to be
+                ranked within categories, others compared to earlier or later acquisitions, and
+                several only became meaningful when viewed in the context of the records around
+                them. A summarized result would have hidden exactly the structure that made the
+                archive valuable.
 
-He folded the note and looked back at the catalogue pages.
-&#x201C;To analyze this archive, I will need window functions.&#x201D;</text>
+                He folded the note and looked back at the catalogue pages.
+                &#x201C;To analyze this archive, I will need window functions.&#x201D;</text>
         </text-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
             <text>Mission 1: Cataloguing the Inhabitants -&#x3E; Endrit
 
-The Collector first wants a stable archive order. SQLaus must assign a sequential catalogue number to every inhabitant within each village, ordered alphabetically by name.
+                The Collector first wants a stable archive order. SQLaus must assign a sequential
+                catalogue number to every inhabitant within each village, ordered alphabetically by
+                name.
 
-Tables: Inhabitant, Village
-Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
+                Tables: Inhabitant, Village
+                Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
             <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
             <text>Mission 2: Ranking the Most Valuable Curiosities -&#x3E; Endrit
 
-The Collector wants a global prestige ranking of all inhabitants by gold. If two inhabitants have the same amount, they should share the same place, with gaps in the following rank positions.
+                The Collector wants a global prestige ranking of all inhabitants by gold. If two
+                inhabitants have the same amount, they should share the same place, with gaps in the
+                following rank positions.
 
-Tables: Inhabitant, Village
-Functions: RANK() with ORDER BY</text>
+                Tables: Inhabitant, Village
+                Functions: RANK() with ORDER BY</text>
             <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
             <text>Mission 3: Compact Village Display -&#x3E; Rino
 
-For a cleaner public exhibition, the Collector wants inhabitants ranked by gold within each village, but without skipped positions after ties.
+                For a cleaner public exhibition, the Collector wants inhabitants ranked by gold
+                within each village, but without skipped positions after ties.
 
-Tables: Inhabitant, Village
-Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
+                Tables: Inhabitant, Village
+                Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
             <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
             <text>Mission 4: Comparing Consecutive Acquisitions -&#x3E; Rino
 
-The archive reveals a sequence of acquisitions. SQLaus must compare each acquisition&#x2019;s estimated value with the previous acquisition in the same category to show how the archive evolved.
+                The archive reveals a sequence of acquisitions. SQLaus must compare each
+                acquisition&#x2019;s estimated value with the previous acquisition in the same
+                category to show how the archive evolved.
 
-Tables: CollectorArchive (new), Inhabitant, Village
-Functions: LAG() with PARTITION BY, ORDER BY
+                Tables: CollectorArchive (new), Inhabitant, Village
+                Functions: LAG() with PARTITION BY, ORDER BY
 
-new table:
-CollectorArchive(entryid, category, villageid, personid, estimated_value, rarity_score, recorded_day)</text>
+                new table:
+                CollectorArchive(entryid, category, villageid, personid, estimated_value,
+                rarity_score, recorded_day)</text>
             <sql-solution>select 1;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <manipulate-scene>
             <text>Mission 5: Updating the records with the next Acquisition.
 
-The Collector wants to see which entry comes next in each category, according to the record date. Because there is an empty column in the records for a key pointing to the next item, SQLaus wants to add said information into the concerning column named next_entryid.</text>
+                The Collector wants to see which entry comes next in each category, according to the
+                record date. Because there is an empty column in the records for a key pointing to
+                the next item, SQLaus wants to add said information into the concerning column named
+                next_entryid.</text>
             <sql-solution>WITH next_entries AS (
-    SELECT
-        entryid,
-        LEAD(entryid) OVER (PARTITION BY category ORDER BY recorded_day) AS next_entryid
-    FROM CollectorArchive
-)
-UPDATE CollectorArchive ca
-SET next_entryid = ne.next_entryid
-FROM next_entries ne
-WHERE ca.entryid = ne.entryid;</sql-solution>
+                SELECT
+                entryid,
+                LEAD(entryid) OVER (PARTITION BY category ORDER BY recorded_day) AS next_entryid
+                FROM CollectorArchive
+                )
+                UPDATE CollectorArchive ca
+                SET next_entryid = ne.next_entryid
+                FROM next_entries ne
+                WHERE ca.entryid = ne.entryid;</sql-solution>
             <sql-check>WITH next_entries AS (
-    SELECT
-        entryid,
-        LEAD(entryid) OVER (PARTITION BY category ORDER BY recorded_day) AS next_entryid
-    FROM CollectorArchive
-)
+                SELECT
+                entryid,
+                LEAD(entryid) OVER (PARTITION BY category ORDER BY recorded_day) AS next_entryid
+                FROM CollectorArchive
+                )
 
-SELECT
-&#x9;ca.entryid,
-    ca.next_entryid
-FROM CollectorArchive ca
-INNER JOIN next_entries ne on ca.entryid = ne.entryid
-where ca.next_entryid = ne.next_entryid;</sql-check>
+                SELECT
+                &#x9;ca.entryid,
+                ca.next_entryid
+                FROM CollectorArchive ca
+                INNER JOIN next_entries ne on ca.entryid = ne.entryid
+                where ca.next_entryid = ne.next_entryid;</sql-check>
             <sql-placeholder></sql-placeholder>
         </manipulate-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
             <text>Mission 6: First Relic and Latest Relic -&#x3E; Jo&#xEB;l
 
-To show how a category developed over time, the Collector asks for every archive row to be displayed together with the first recorded value and the latest recorded value of its category.
+                To show how a category developed over time, the Collector asks for every archive row
+                to be displayed together with the first recorded value and the latest recorded value
+                of its category.
 
-Display the following columns:
-- category
-- first_description
-- first_recorded_day
-- first_estimated_value
-- last_description
-- last_recorded_day
-- last_estimated_value</text>
+                Display the following columns:
+                - category
+                - first_description
+                - first_recorded_day
+                - first_estimated_value
+                - last_description
+                - last_recorded_day
+                - last_estimated_value</text>
             <sql-solution>WITH cat_first_last AS (
-    SELECT DISTINCT
-        category,
+                SELECT DISTINCT
+                category,
 
-        FIRST_VALUE(entryid) OVER (
-            PARTITION BY category ORDER BY recorded_day
-            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-        ) AS first_entryid,
+                FIRST_VALUE(entryid) OVER (
+                PARTITION BY category ORDER BY recorded_day
+                ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+                ) AS first_entryid,
 
-        LAST_VALUE(entryid) OVER (
-            PARTITION BY category ORDER BY recorded_day
-            ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-            ) AS last_entryid
+                LAST_VALUE(entryid) OVER (
+                PARTITION BY category ORDER BY recorded_day
+                ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+                ) AS last_entryid
 
-    FROM CollectorArchive
-)
-SELECT
-    cfl.category,
-    ca_first.description AS first_description,
-    ca_first.recorded_day AS first_recorded_day,
-    ca_first.estimated_value AS first_estimated_value,
-    ca_last.description AS last_description,
-    ca_last.recorded_day AS last_recorded_day,
-    ca_last.estimated_value AS last_estimated_value
-FROM cat_first_last AS cfl
-INNER JOIN  CollectorArchive AS ca_first        on cfl.first_entryid = ca_first.entryid
-INNER JOIN  CollectorArchive AS ca_last         on cfl.last_entryid = ca_last.entryid
-;</sql-solution>
+                FROM CollectorArchive
+                )
+                SELECT
+                cfl.category,
+                ca_first.description AS first_description,
+                ca_first.recorded_day AS first_recorded_day,
+                ca_first.estimated_value AS first_estimated_value,
+                ca_last.description AS last_description,
+                ca_last.recorded_day AS last_recorded_day,
+                ca_last.estimated_value AS last_estimated_value
+                FROM cat_first_last AS cfl
+                INNER JOIN CollectorArchive AS ca_first on cfl.first_entryid = ca_first.entryid
+                INNER JOIN CollectorArchive AS ca_last on cfl.last_entryid = ca_last.entryid
+                ;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
-            <text>Mission 7: The Third-Rarest Standard -&#x3E; Lana
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
+            <text>Mission 7: The Third-Rarest Standard -&gt; Lana
 
-The Collector considers the third-highest rarity_score in each category to be the perfect benchmark for comparison. SQLaus must retrieve that third value and use it as a reference within the category.
+                While studying the Archive, SQLaus noticed that the Collector does not compare items
+                randomly. Instead, he uses a fixed benchmark: the third entry in descending rarity
+                within each category.
 
-Tables: CollectorArchive (new), Inhabitant, Village
-Functions: NTH_VALUE() with PARTITION BY, ORDER BY</text>
-            <sql-solution>select 1;</sql-solution>
+                “This is the standard,” SQLaus murmurs. “Not the rarest… but the point of balance.”
+                To understand the Collector’s logic, SQLaus must display every archive entry
+                together with this benchmark value for its category.
+
+                Display the following columns:
+                - category
+                - description
+                - rarity_score
+                - third_highest_rarity
+
+                Tables: CollectorArchive
+                Functions: NTH_VALUE() with PARTITION BY, ORDER BY, ROWS BETWEEN UNBOUNDED PRECEDING
+                AND UNBOUNDED FOLLOWING</text>
+            <sql-solution>SELECT
+                category,
+                description,
+                rarity_score,
+                NTH_VALUE(rarity_score, 3) OVER (
+                PARTITION BY category
+                ORDER BY rarity_score DESC, entryid
+                ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+                ) AS third_highest_rarity
+                FROM CollectorArchive;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
-            <text>Mission 8: TBD -&#x3E; Lana</text>
-            <sql-solution>select 1;</sql-solution>
+
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
+            <text>Mission 8: The Collector's Prestige Tiers -&gt; Lana
+
+                To present the archive more clearly, the Collector wants each category divided into
+                three prestige tiers based on estimated value. SQLaus must assign every archive
+                entry to its tier within the category, with the most valuable entries placed in tier
+                1.
+
+                Display the following columns:
+                - category
+                - description
+                - estimated_value
+                - prestige_tier
+
+                Tables: CollectorArchive
+                Functions: NTILE() with PARTITION BY, ORDER BY</text>
+            <sql-solution>SELECT
+                category,
+                description,
+                estimated_value,
+                NTILE(3) OVER (
+                PARTITION BY category
+                ORDER BY estimated_value DESC, entryid
+                ) AS prestige_tier
+                FROM CollectorArchive;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
-        <text-scene>
-            <text>Lorem Ipsum</text>
-        </text-scene>
     </scenes>
-    <initial-sql-script>CREATE TYPE inhabitant_state AS ENUM (&#x27;friendly&#x27;, &#x27;evil&#x27;, &#x27;kidnapped&#x27;, &#x27;emigrated&#x27;, &#x27;?&#x27;);
-CREATE TYPE inhabitant_gender AS ENUM (&#x27;m&#x27;, &#x27;f&#x27;, &#x27;d&#x27;, &#x27;?&#x27;);
-CREATE TYPE archive_category AS ENUM (&#x27;tool&#x27;, &#x27;consumeable&#x27;, &#x27;clothing&#x27;, &#x27;trinket&#x27;);
+    <initial-sql-script>CREATE TYPE inhabitant_state AS ENUM (&#x27;friendly&#x27;,
+        &#x27;evil&#x27;, &#x27;kidnapped&#x27;, &#x27;emigrated&#x27;, &#x27;?&#x27;);
+        CREATE TYPE inhabitant_gender AS ENUM (&#x27;m&#x27;, &#x27;f&#x27;, &#x27;d&#x27;,
+        &#x27;?&#x27;);
+        CREATE TYPE archive_category AS ENUM (&#x27;tool&#x27;, &#x27;consumeable&#x27;,
+        &#x27;clothing&#x27;, &#x27;trinket&#x27;);
 
-CREATE TABLE Village (
-    villageid SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    chief INTEGER NOT NULL
-);
+        CREATE TABLE Village (
+        villageid SERIAL PRIMARY KEY,
+        name TEXT NOT NULL
+        );
 
-CREATE TABLE Inhabitant (
-    personid SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    villageid INTEGER NOT NULL
+        CREATE TABLE Inhabitant (
+        personid SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        villageid INTEGER NOT NULL
         REFERENCES Village(villageid),
-    gender inhabitant_gender,
-    job TEXT NOT NULL,
-    gold INTEGER,
-    state inhabitant_state
-);
+        gender inhabitant_gender,
+        job TEXT NOT NULL,
+        gold INTEGER,
+        state inhabitant_state
+        );
 
-CREATE TABLE Item (
-    item TEXT NOT NULL,
-    owner INTEGER
-);
-
-CREATE TABLE CollectorArchive (
-    entryid SERIAL PRIMARY KEY,
-    villageid INTEGER NOT NULL
+        CREATE TABLE CollectorArchive (
+        entryid SERIAL PRIMARY KEY,
+        villageid INTEGER NOT NULL
         REFERENCES Village(villageid),
-    personid INTEGER NOT NULL
+        personid INTEGER NOT NULL
         REFERENCES Inhabitant(personid),
-    category archive_category,
-    rarity_score INTEGER NOT NULL CHECK (rarity_score BETWEEN 1 AND 3),
-    estimated_value INTEGER NOT NULL,
-    recorded_day DATE NOT NULL,
-    description TEXT NOT NULL,
-    next_entryid INTEGER NULL
+        category archive_category,
+        rarity_score INTEGER NOT NULL CHECK (rarity_score BETWEEN 1 AND 3),
+        estimated_value INTEGER NOT NULL,
+        recorded_day DATE NOT NULL,
+        description TEXT NOT NULL,
+        next_entryid INTEGER NULL
         REFERENCES CollectorArchive(entryid)
         DEFAULT NULL
-);
+        );
 
-INSERT INTO Village (name, chief)
-VALUES
-(&#x27;Monkeycity&#x27;, 1),
-(&#x27;Cucumbertown&#x27;, 6),
-(&#x27;Onionville&#x27;,13);
+        INSERT INTO Village (name)
+        VALUES
+        (&#x27;Monkeycity&#x27;),
+        (&#x27;Cucumbertown&#x27;),
+        (&#x27;Onionville&#x27;);
 
-INSERT INTO Inhabitant (name, villageid, gender, job, gold, state)
-VALUES
-(&#x27;Paul Bakerman&#x27;, 1, &#x27;m&#x27;, &#x27;baker&#x27;, 850, &#x27;friendly&#x27;),
-(&#x27;Ernest Perry&#x27;, 3, &#x27;m&#x27;, &#x27;weaponsmith&#x27;, 280, &#x27;friendly&#x27;),
-(&#x27;Rita Ox&#x27;, 1, &#x27;f&#x27;, &#x27;baker&#x27;, 350, &#x27;friendly&#x27;),
-(&#x27;Carl Ox&#x27;, 1, &#x27;m&#x27;, &#x27;merchant&#x27;, 250, &#x27;friendly&#x27;),
-(&#x27;Dirty Dieter&#x27;, 3, &#x27;m&#x27;, &#x27;smith&#x27;, 650, &#x27;evil&#x27;),
-(&#x27;Gerry Slaughterer&#x27;, 2, &#x27;m&#x27;, &#x27;butcher&#x27;, 4850, &#x27;evil&#x27;),
-(&#x27;Peter Slaughterer&#x27;, 3, &#x27;m&#x27;, &#x27;butcher&#x27;, 3250, &#x27;evil&#x27;),
-(&#x27;Arthur Tailor&#x27;, 2, &#x27;m&#x27;, &#x27;pilot&#x27;, 490, &#x27;kidnapped&#x27;),
-(&#x27;Tiffany Drummer&#x27;, 1, &#x27;f&#x27;, &#x27;baker&#x27;, 550, &#x27;evil&#x27;),
-(&#x27;Peter Drummer&#x27;, 1, &#x27;m&#x27;, &#x27;smith&#x27;, 600, &#x27;friendly&#x27;),
-(&#x27;Dirty Diane&#x27;, 3, &#x27;f&#x27;, &#x27;farmer&#x27;, 10, &#x27;evil&#x27;),
-(&#x27;Otto Alexander&#x27;, 2, &#x27;m&#x27;, &#x27;dealer&#x27;, 680, &#x27;friendly&#x27;),
-(&#x27;Fred Dix&#x27;, 3, &#x27;m&#x27;, &#x27;author&#x27;, 420, &#x27;friendly&#x27;),
-(&#x27;Enrico Carpenter&#x27;, 3, &#x27;m&#x27;, &#x27;weaponsmith&#x27;, 510, &#x27;evil&#x27;),
-(&#x27;Helen Grasshead&#x27;, 2, &#x27;f&#x27;, &#x27;dealer&#x27;, 680, &#x27;friendly&#x27;),
-(&#x27;Ivy Hatter&#x27;, 1, &#x27;f&#x27;, &#x27;dealer&#x27;, 770, &#x27;evil&#x27;),
-(&#x27;Edward Grasshead&#x27;, 3, &#x27;m&#x27;, &#x27;butcher&#x27;, 990, &#x27;friendly&#x27;),
-(&#x27;Ryan Horse&#x27;, 3, &#x27;m&#x27;, &#x27;blacksmith&#x27;, 390, &#x27;friendly&#x27;),
-(&#x27;Ann Meaty&#x27;, 2, &#x27;f&#x27;, &#x27;butcher&#x27;, 2280, &#x27;friendly&#x27;);
+        INSERT INTO Inhabitant (name, villageid, gender, job, gold, state)
+        VALUES
+        (&#x27;Paul Bakerman&#x27;, 1, &#x27;m&#x27;, &#x27;baker&#x27;, 850, &#x27;friendly&#x27;),
+        (&#x27;Ernest Perry&#x27;, 3, &#x27;m&#x27;, &#x27;weaponsmith&#x27;, 280,
+        &#x27;friendly&#x27;),
+        (&#x27;Rita Ox&#x27;, 1, &#x27;f&#x27;, &#x27;baker&#x27;, 350, &#x27;friendly&#x27;),
+        (&#x27;Carl Ox&#x27;, 1, &#x27;m&#x27;, &#x27;merchant&#x27;, 250, &#x27;friendly&#x27;),
+        (&#x27;Dirty Dieter&#x27;, 3, &#x27;m&#x27;, &#x27;smith&#x27;, 650, &#x27;evil&#x27;),
+        (&#x27;Gerry Slaughterer&#x27;, 2, &#x27;m&#x27;, &#x27;butcher&#x27;, 4850,
+        &#x27;evil&#x27;),
+        (&#x27;Peter Slaughterer&#x27;, 3, &#x27;m&#x27;, &#x27;butcher&#x27;, 3250,
+        &#x27;evil&#x27;),
+        (&#x27;Arthur Tailor&#x27;, 2, &#x27;m&#x27;, &#x27;pilot&#x27;, 490,
+        &#x27;kidnapped&#x27;),
+        (&#x27;Tiffany Drummer&#x27;, 1, &#x27;f&#x27;, &#x27;baker&#x27;, 550, &#x27;evil&#x27;),
+        (&#x27;Peter Drummer&#x27;, 1, &#x27;m&#x27;, &#x27;smith&#x27;, 600, &#x27;friendly&#x27;),
+        (&#x27;Dirty Diane&#x27;, 3, &#x27;f&#x27;, &#x27;farmer&#x27;, 10, &#x27;evil&#x27;),
+        (&#x27;Otto Alexander&#x27;, 2, &#x27;m&#x27;, &#x27;dealer&#x27;, 680,
+        &#x27;friendly&#x27;),
+        (&#x27;Fred Dix&#x27;, 3, &#x27;m&#x27;, &#x27;author&#x27;, 420, &#x27;friendly&#x27;),
+        (&#x27;Enrico Carpenter&#x27;, 3, &#x27;m&#x27;, &#x27;weaponsmith&#x27;, 510,
+        &#x27;evil&#x27;),
+        (&#x27;Helen Grasshead&#x27;, 2, &#x27;f&#x27;, &#x27;dealer&#x27;, 680,
+        &#x27;friendly&#x27;),
+        (&#x27;Ivy Hatter&#x27;, 1, &#x27;f&#x27;, &#x27;dealer&#x27;, 770, &#x27;evil&#x27;),
+        (&#x27;Edward Grasshead&#x27;, 3, &#x27;m&#x27;, &#x27;butcher&#x27;, 990,
+        &#x27;friendly&#x27;),
+        (&#x27;Ryan Horse&#x27;, 3, &#x27;m&#x27;, &#x27;blacksmith&#x27;, 390,
+        &#x27;friendly&#x27;),
+        (&#x27;Ann Meaty&#x27;, 2, &#x27;f&#x27;, &#x27;butcher&#x27;, 2280, &#x27;friendly&#x27;);
 
-INSERT INTO Item (item, owner)
-VALUES
-(&#x27;teapot&#x27;, NULL),
-(&#x27;cane&#x27;, 5),
-(&#x27;hammer&#x27;, 2),
-(&#x27;ring&#x27;, NULL),
-(&#x27;coffee cup&#x27;, NULL),
-(&#x27;bucket&#x27;, NULL),
-(&#x27;rope&#x27;, 17),
-(&#x27;carton&#x27;, NULL),
-(&#x27;lightbulb&#x27;, NULL);
-
-INSERT INTO CollectorArchive (villageid, personid, category, rarity_score, estimated_value, recorded_day, description)
-VALUES
-(3, 11, &#x27;consumeable&#x27;, 1, 40, &#x27;2019-11-03&#x27;, &#x27;Dried island herbs&#x27;),
-(3, 14, &#x27;clothing&#x27;, 1, 115, &#x27;2022-05-22&#x27;, &#x27;Leather smith apron&#x27;),
-(2, 15, &#x27;clothing&#x27;, 2, 480, &#x27;2024-08-09&#x27;, &#x27;Fine dealer gloves&#x27;),
-(3, 13, &#x27;consumeable&#x27;, 3, 750, &#x27;2023-08-30&#x27;, &#x27;Rare ink vial&#x27;),
-(2, 8, &#x27;clothing&#x27;, 2, 390, &#x27;2018-09-27&#x27;, &#x27;Brass-buttoned coat&#x27;),
-(1, 16, &#x27;clothing&#x27;, 3, 940, &#x27;2020-12-15&#x27;, &#x27;Deep violet cloak&#x27;),
-(3, 18, &#x27;tool&#x27;, 1, 130, &#x27;2024-06-20&#x27;, &#x27;Oversized iron bellows&#x27;),
-(3, 5, &#x27;trinket&#x27;, 2, 340, &#x27;2020-03-11&#x27;, &#x27;Tarnished cane grip&#x27;),
-(2, 6, &#x27;consumeable&#x27;, 2, 220, &#x27;2021-04-19&#x27;, &#x27;Wax-sealed sausage&#x27;),
-(2, 19, &#x27;tool&#x27;, 3, 870, &#x27;2021-07-08&#x27;, &#x27;Engraved butcher cleaver&#x27;),
-(2, 12, &#x27;trinket&#x27;, 3, 810, &#x27;2022-10-04&#x27;, &#x27;Amber origin pendant&#x27;),
-(1, 4, &#x27;trinket&#x27;, 1, 80, &#x27;2018-06-25&#x27;, &#x27;Carved merchant seal&#x27;),
-(1, 1, &#x27;consumeable&#x27;, 1, 60, &#x27;2018-02-14&#x27;, &#x27;Sealed honey jar&#x27;),
-(3, 17, &#x27;trinket&#x27;, 1, 95, &#x27;2025-02-02&#x27;, &#x27;Knotted rope token&#x27;),
-(1, 3, &#x27;consumeable&#x27;, 2, 175, &#x27;2025-01-10&#x27;, &#x27;Spiced rye loaf&#x27;),
-(1, 9, &#x27;trinket&#x27;, 2, 260, &#x27;2023-04-17&#x27;, &#x27;Engraved brass cup&#x27;),
-(3, 2, &#x27;tool&#x27;, 2, 310, &#x27;2019-03-12&#x27;, &#x27;Worn blacksmith hammer&#x27;);</initial-sql-script>
+        INSERT INTO CollectorArchive (villageid, personid, category, rarity_score, estimated_value,
+        recorded_day, description)
+        VALUES
+        (3, 11, &#x27;consumeable&#x27;, 1, 40, &#x27;2019-11-03&#x27;, &#x27;Dried island
+        herbs&#x27;),
+        (3, 14, &#x27;clothing&#x27;, 1, 115, &#x27;2022-05-22&#x27;, &#x27;Leather smith
+        apron&#x27;),
+        (2, 15, &#x27;clothing&#x27;, 2, 480, &#x27;2024-08-09&#x27;, &#x27;Fine dealer
+        gloves&#x27;),
+        (3, 13, &#x27;consumeable&#x27;, 3, 750, &#x27;2023-08-30&#x27;, &#x27;Rare ink vial&#x27;),
+        (2, 8, &#x27;clothing&#x27;, 2, 390, &#x27;2018-09-27&#x27;, &#x27;Brass-buttoned
+        coat&#x27;),
+        (1, 16, &#x27;clothing&#x27;, 3, 940, &#x27;2020-12-15&#x27;, &#x27;Deep violet
+        cloak&#x27;),
+        (3, 18, &#x27;tool&#x27;, 1, 130, &#x27;2024-06-20&#x27;, &#x27;Oversized iron
+        bellows&#x27;),
+        (3, 5, &#x27;trinket&#x27;, 2, 340, &#x27;2020-03-11&#x27;, &#x27;Tarnished cane
+        grip&#x27;),
+        (2, 6, &#x27;consumeable&#x27;, 2, 220, &#x27;2021-04-19&#x27;, &#x27;Wax-sealed
+        sausage&#x27;),
+        (2, 19, &#x27;tool&#x27;, 3, 870, &#x27;2021-07-08&#x27;, &#x27;Engraved butcher
+        cleaver&#x27;),
+        (2, 12, &#x27;trinket&#x27;, 3, 810, &#x27;2022-10-04&#x27;, &#x27;Amber origin
+        pendant&#x27;),
+        (1, 4, &#x27;trinket&#x27;, 1, 80, &#x27;2018-06-25&#x27;, &#x27;Carved merchant
+        seal&#x27;),
+        (1, 1, &#x27;consumeable&#x27;, 1, 60, &#x27;2018-02-14&#x27;, &#x27;Sealed honey
+        jar&#x27;),
+        (3, 17, &#x27;trinket&#x27;, 1, 95, &#x27;2025-02-02&#x27;, &#x27;Knotted rope token&#x27;),
+        (1, 3, &#x27;consumeable&#x27;, 2, 175, &#x27;2025-01-10&#x27;, &#x27;Spiced rye
+        loaf&#x27;),
+        (1, 9, &#x27;trinket&#x27;, 2, 260, &#x27;2023-04-17&#x27;, &#x27;Engraved brass cup&#x27;),
+        (3, 2, &#x27;tool&#x27;, 2, 310, &#x27;2019-03-12&#x27;, &#x27;Worn blacksmith
+        hammer&#x27;);</initial-sql-script>
 </game>
