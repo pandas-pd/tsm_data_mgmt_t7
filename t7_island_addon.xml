@@ -49,7 +49,17 @@
 
                 Tables: Inhabitant, Village
                 Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
-            <sql-solution>select 1;</sql-solution>
+            <sql-solution>
+                SELECT
+                  v.name AS village_name,
+                  i.name AS inhabitant_name,
+                  ROW_NUMBER() OVER (
+                    PARTITION BY i.villageid
+                    ORDER BY i.name
+                  ) AS catalogue_number
+                  FROM Inhabitant i
+                  INNER JOIN Village v ON i.villageid = v.villageid;
+            </sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
@@ -62,7 +72,17 @@
 
                 Tables: Inhabitant, Village
                 Functions: RANK() with ORDER BY</text>
-            <sql-solution>select 1;</sql-solution>
+            <sql-solution>
+              SELECT
+                i.name AS inhabitant_name,
+                v.name AS village_name,
+                i.gold,
+                RANK() OVER (
+                  ORDER BY i.gold DESC
+                ) AS prestige_rank
+              FROM Inhabitant i
+              INNER JOIN Village v ON i.villageid = v.villageid;
+            </sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
