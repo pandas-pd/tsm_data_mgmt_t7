@@ -89,29 +89,71 @@
             are-col-names-relevant="false">
             <text>Mission 3: Compact Village Display -&#x3E; Rino
 
-                For a cleaner public exhibition, the Collector wants inhabitants ranked by gold
-                within each village, but without skipped positions after ties.
+                As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a
+                small but awkward problem. Whenever two inhabitants own the same amount of gold, the
+                ranking leaves gaps and makes the exhibition look untidy.
+
+                &#x201C;That will not do,&#x201D; he says. &#x201C;Equal wealth may share a place,
+                but the list itself should remain compact.&#x201D;
+
+                The Collector therefore asks for a village-wise ranking of inhabitants by gold,
+                using consecutive rank numbers even when ties occur.
+
+                The result should include:
+                - inhabitant_name
+                - village_name
+                - gold
+                - village_rank
 
                 Tables: Inhabitant, Village
                 Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
-            <sql-solution>select 1;</sql-solution>
+            <sql-solution>
+                SELECT
+                    i.name AS inhabitant_name,
+                    v.name AS village_name,
+                    i.gold,
+                    DENSE_RANK() OVER (
+                        PARTITION BY i.villageid
+                        ORDER BY i.gold DESC
+                    ) AS village_rank
+                FROM Inhabitant i
+                INNER JOIN Village v ON i.villageid = v.villageid;
+            </sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
             <text>Mission 4: Comparing Consecutive Acquisitions -&#x3E; Rino
 
-                The archive reveals a sequence of acquisitions. SQLaus must compare each
-                acquisition&#x2019;s estimated value with the previous acquisition in the same
-                category to show how the archive evolved.
+                The longer SQLaus studies the Archive, the clearer it becomes that the Collector
+                cared not only about isolated values, but about change over time. An acquisition
+                only reveals its place in the archive when it is compared with the one that came
+                before it in the same category.
 
-                Tables: CollectorArchive (new), Inhabitant, Village
-                Functions: LAG() with PARTITION BY, ORDER BY
+                To trace this development, the Collector asks SQLaus to place each entry beside the
+                estimated value of the previous acquisition in its category.
 
-                new table:
-                CollectorArchive(entryid, category, villageid, personid, estimated_value,
-                rarity_score, recorded_day)</text>
-            <sql-solution>select 1;</sql-solution>
+                For this, the output should contain:
+                - category
+                - recorded_day
+                - description
+                - estimated_value
+                - previous_estimated_value
+
+                Tables: CollectorArchive
+                Functions: LAG() with PARTITION BY, ORDER BY</text>
+            <sql-solution>
+                SELECT
+                    category,
+                    recorded_day,
+                    description,
+                    estimated_value,
+                    LAG(estimated_value) OVER (
+                        PARTITION BY category
+                        ORDER BY recorded_day, entryid
+                    ) AS previous_estimated_value
+                FROM CollectorArchive;
+            </sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <manipulate-scene>
