@@ -117,10 +117,10 @@
         <manipulate-scene>
             <text>Mission 5: Updating the records with the next Acquisition.
 
-                The Collector wants to see which entry comes next in each category, according to the
-                record date. Because there is an empty column in the records for a key pointing to
-                the next item, SQLaus wants to add said information into the concerning column named
-                next_entryid.</text>
+                The Collector wants to see which entry comes next in each category, according to 
+                the record date. Because there is an empty column in the records for a key pointing
+                to the next item, SQLaus wants to add said information into the concerning column
+                namednext_entryid. This should make the archive more comprehensible.</text>
             <sql-solution>WITH next_entries AS (
                 SELECT
                 entryid,
@@ -150,11 +150,12 @@
             are-col-names-relevant="false">
             <text>Mission 6: First Relic and Latest Relic -&#x3E; Jo&#xEB;l
 
-                To show how a category developed over time, the Collector asks for every archive row
-                to be displayed together with the first recorded value and the latest recorded value
-                of its category.
+                After browsing through the archive documents for a while, SQLaus wonders, how the
+                different Categories developed over time. In order to do so, he wants to see the 
+                first, and last entry per category, one row per category to keep things tidy.
 
-                Display the following columns:
+                Giving it some thought, SQLaus decides that the following columns should
+                be displayed:
                 - category
                 - first_description
                 - first_recorded_day
