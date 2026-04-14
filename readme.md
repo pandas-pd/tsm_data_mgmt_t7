@@ -105,4 +105,4 @@ The term project includes:
 
 This extension transforms SQL Island into a more advanced learning platform by integrating **window functions**, one of the most powerful techniques of modern SQL.
 
-By combining **storytelling + hands-on SQL**, the project helps learners to move from basic querying to **real-world analytical thinking**.
+By combining **storytelling + hands-on SQL**, this project helps learners to move from basic querying to **real-world analytical thinking**.
