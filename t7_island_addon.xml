@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <game>
     <head>
-        <title>t7_test</title>
-        <teaser>Window functions on SQL Island</teaser>
-        <copyright>&#xA9; SQL Island addon</copyright>
+        <title>T7 SQL Island</title>
+        <teaser>SQL Island and the Collector's Archive</teaser>
+        <copyright>&#xA9; T7 (Rino Moreno Albertin, Lana Cvijic, Joël Tauss, Endrit Nazifi)</copyright>
     </head>
     <scenes>
         <text-scene>
@@ -41,53 +41,67 @@
         </text-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 1: Cataloguing the Inhabitants -&#x3E; Endrit
+            <text>Mission 0: Opening the Collector's Archive
+
+                Before SQLaus can bring order to the Collector's records, he first needs to inspect
+                the archive itself. Display the complete CollectorArchive table so he can study the
+                available entries, categories, values, and recorded dates.</text>
+            <sql-solution>
+                SELECT * FROM CollectorArchive;
+            </sql-solution>
+            <sql-placeholder></sql-placeholder>
+        </select-scene>
+        <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
+            are-col-names-relevant="false">
+            <text>Mission 1: Cataloguing the Inhabitants
 
                 The Collector first wants a stable archive order. SQLaus must assign a sequential
                 catalogue number to every inhabitant within each village, ordered alphabetically by
                 name.
 
                 Tables: Inhabitant, Village
+
                 Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
             <sql-solution>
                 SELECT
-                  v.name AS village_name,
-                  i.name AS inhabitant_name,
-                  ROW_NUMBER() OVER (
-                    PARTITION BY i.villageid
-                    ORDER BY i.name
-                  ) AS catalogue_number
-                  FROM Inhabitant i
-                  INNER JOIN Village v ON i.villageid = v.villageid;
+                v.name AS village_name,
+                i.name AS inhabitant_name,
+                ROW_NUMBER() OVER (
+                PARTITION BY i.villageid
+                ORDER BY i.name
+                ) AS catalogue_number
+                FROM Inhabitant i
+                INNER JOIN Village v ON i.villageid = v.villageid;
             </sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 2: Ranking the Most Valuable Curiosities -&#x3E; Endrit
+            <text>Mission 2: Ranking the Most Valuable Curiosities
 
                 The Collector wants a global prestige ranking of all inhabitants by gold. If two
                 inhabitants have the same amount, they should share the same place, with gaps in the
                 following rank positions.
 
                 Tables: Inhabitant, Village
+
                 Functions: RANK() with ORDER BY</text>
             <sql-solution>
-              SELECT
+                SELECT
                 i.name AS inhabitant_name,
                 v.name AS village_name,
                 i.gold,
                 RANK() OVER (
-                  ORDER BY i.gold DESC
+                ORDER BY i.gold DESC
                 ) AS prestige_rank
-              FROM Inhabitant i
-              INNER JOIN Village v ON i.villageid = v.villageid;
+                FROM Inhabitant i
+                INNER JOIN Village v ON i.villageid = v.villageid;
             </sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 3: Compact Village Display -&#x3E; Rino
+            <text>Mission 3: Compact Village Display
 
                 As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a
                 small but awkward problem. Whenever two inhabitants own the same amount of gold, the
@@ -106,16 +120,17 @@
                 - village_rank
 
                 Tables: Inhabitant, Village
+
                 Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
             <sql-solution>
                 SELECT
-                    i.name AS inhabitant_name,
-                    v.name AS village_name,
-                    i.gold,
-                    DENSE_RANK() OVER (
-                        PARTITION BY i.villageid
-                        ORDER BY i.gold DESC
-                    ) AS village_rank
+                i.name AS inhabitant_name,
+                v.name AS village_name,
+                i.gold,
+                DENSE_RANK() OVER (
+                PARTITION BY i.villageid
+                ORDER BY i.gold DESC
+                ) AS village_rank
                 FROM Inhabitant i
                 INNER JOIN Village v ON i.villageid = v.villageid;
             </sql-solution>
@@ -123,7 +138,7 @@
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 4: Comparing Consecutive Acquisitions -&#x3E; Rino
+            <text>Mission 4: Comparing Consecutive Acquisitions
 
                 The longer SQLaus studies the Archive, the clearer it becomes that the Collector
                 cared not only about isolated values, but about change over time. An acquisition
@@ -141,17 +156,18 @@
                 - previous_estimated_value
 
                 Tables: CollectorArchive
+
                 Functions: LAG() with PARTITION BY, ORDER BY</text>
             <sql-solution>
                 SELECT
-                    category,
-                    recorded_day,
-                    description,
-                    estimated_value,
-                    LAG(estimated_value) OVER (
-                        PARTITION BY category
-                        ORDER BY recorded_day, entryid
-                    ) AS previous_estimated_value
+                category,
+                recorded_day,
+                description,
+                estimated_value,
+                LAG(estimated_value) OVER (
+                PARTITION BY category
+                ORDER BY recorded_day, entryid
+                ) AS previous_estimated_value
                 FROM CollectorArchive;
             </sql-solution>
             <sql-placeholder></sql-placeholder>
@@ -159,7 +175,7 @@
         <manipulate-scene>
             <text>Mission 5: Updating the records with the next Acquisition.
 
-                The Collector wants to see which entry comes next in each category, according to 
+                The Collector wants to see which entry comes next in each category, according to
                 the record date. Because there is an empty column in the records for a key pointing
                 to the next item, SQLaus wants to add said information into the concerning column
                 namednext_entryid. This should make the archive more comprehensible.</text>
@@ -190,10 +206,10 @@
         </manipulate-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 6: First Relic and Latest Relic -&#x3E; Jo&#xEB;l
+            <text>Mission 6: First Relic and Latest Relic
 
                 After browsing through the archive documents for a while, SQLaus wonders, how the
-                different Categories developed over time. In order to do so, he wants to see the 
+                different Categories developed over time. In order to do so, he wants to see the
                 first, and last entry per category, one row per category to keep things tidy.
 
                 Giving it some thought, SQLaus decides that the following columns should
@@ -235,28 +251,32 @@
                 ;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
+
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 7: The Third-Rarest Standard -&gt; Lana
+            <text>Mission 7: The Third-Rarest Standard
 
                 While studying the Archive, SQLaus noticed that the Collector does not compare items
                 randomly. Instead, he uses a fixed benchmark: the third entry in descending rarity
                 within each category.
 
                 “This is the standard,” SQLaus murmurs. “Not the rarest… but the point of balance.”
-                To understand the Collector’s logic, SQLaus must display every archive entry
-                together with this benchmark value for its category.
-
-                Display the following columns:
+                To understand the Collector's logic, SQLaus must display every archive entry
+                together with this benchmark value for its category. 
+                
+                To do so, he needs to display
+                the following columns:
                 - category
                 - description
                 - rarity_score
-                - third_highest_rarity
+                - third_highest_rarity (the third value in descending rarity order within the
+                category)
 
-                Tables: CollectorArchive
-                Functions: NTH_VALUE() with PARTITION BY, ORDER BY, ROWS BETWEEN UNBOUNDED PRECEDING
-                AND UNBOUNDED FOLLOWING</text>
-            <sql-solution>SELECT
+                Method hint: Work within each category, order entries by rarity descending, and
+                retrieve the third value as a constant reference for all rows.</text>
+
+            <sql-solution>
+                SELECT
                 category,
                 description,
                 rarity_score,
@@ -265,28 +285,46 @@
                 ORDER BY rarity_score DESC, entryid
                 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
                 ) AS third_highest_rarity
-                FROM CollectorArchive;</sql-solution>
+                FROM CollectorArchive;
+            </sql-solution>
+
             <sql-placeholder></sql-placeholder>
         </select-scene>
 
+        <text-scene>
+            <text>The hidden benchmark appears at last.
+
+                SQLaus realizes that the Collector never focused only on extremes, but instead
+                compared every item against a stable internal standard.
+
+                “You're starting to understand,” he murmurs.</text>
+        </text-scene>
+
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false"
             are-col-names-relevant="false">
-            <text>Mission 8: The Collector's Prestige Tiers -&gt; Lana
+            <text>Mission 8: The Collector's Prestige Tiers
 
-                To present the archive more clearly, the Collector wants each category divided into
-                three prestige tiers based on estimated value. SQLaus must assign every archive
-                entry to its tier within the category, with the most valuable entries placed in tier
-                1.
+                The Collector now wants the archive to be easier to understand at a glance.
 
-                Display the following columns:
+                A long list of values is useful for experts, but visitors need structure. Each
+                category must therefore be divided into three prestige tiers based on estimated
+                value.
+
+                SQLaus must split the entries of every category into three groups, ordering them
+                from highest to lowest value, so that each item receives a tier relative to others
+                in the same category.
+
+                To do so, he needs to display the following columns:
                 - category
                 - description
                 - estimated_value
                 - prestige_tier
 
-                Tables: CollectorArchive
-                Functions: NTILE() with PARTITION BY, ORDER BY</text>
-            <sql-solution>SELECT
+                Method hint: Work within each category, order by estimated value descending and
+                divide the rows into three groups.</text>
+
+            <sql-solution>
+                SELECT
                 category,
                 description,
                 estimated_value,
@@ -294,9 +332,41 @@
                 PARTITION BY category
                 ORDER BY estimated_value DESC, entryid
                 ) AS prestige_tier
-                FROM CollectorArchive;</sql-solution>
+                FROM CollectorArchive;
+            </sql-solution>
+
             <sql-placeholder></sql-placeholder>
         </select-scene>
+
+        <text-scene>
+            <text>The archive now reveals its final form.
+
+                What once seemed like scattered records has become a clear structure of tiers,
+                standards, and relationships.
+
+                SQLaus leans back and smiles.
+
+                “You did it. You didn't just read the archive — you understood it!”</text>
+        </text-scene>
+
+        <text-scene>
+            <text>Congratulations! You solved all missions and helped SQLaus bring order to the
+                Collector's archive.</text>
+
+        </text-scene>
+
+        <text-scene>
+            <text>
+                You have successfully applied window functions to uncover patterns within the data:
+                - assigning ordered positions within groups
+                - ranking and comparing values
+                - analyzing changes over time
+                - retrieving specific reference points within partitions
+                - dividing data into meaningful tiers
+
+                Through this, you did not simply query the archive — you understood how to work with
+                data in context.</text>
+        </text-scene>
     </scenes>
     <initial-sql-script>CREATE TYPE inhabitant_state AS ENUM (&#x27;friendly&#x27;,
         &#x27;evil&#x27;, &#x27;kidnapped&#x27;, &#x27;emigrated&#x27;, &#x27;?&#x27;);
@@ -373,7 +443,6 @@
         (&#x27;Ryan Horse&#x27;, 3, &#x27;m&#x27;, &#x27;blacksmith&#x27;, 390,
         &#x27;friendly&#x27;),
         (&#x27;Ann Meaty&#x27;, 2, &#x27;f&#x27;, &#x27;butcher&#x27;, 2280, &#x27;friendly&#x27;);
-
         INSERT INTO CollectorArchive (villageid, personid, category, rarity_score, estimated_value,
         recorded_day, description)
         VALUES
