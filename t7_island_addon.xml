@@ -176,18 +176,15 @@ where ca.next_entryid = ne.next_entryid;</sql-check>
             <text>SQLaus writes down the next entries in the records in the notebook. Now, that this information is logged for each item, it makes it easier to follow when and in which order items were added.</text>
         </text-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
-            <text>Mission 6: First Relic and Latest Relic
+            <text>Mission 6: Item recency in categories
 
-After browsing through the archive documents and records for a while, SQLaus wonders, how the different Categories developed over time. In order to do so, he wants to see the first, and last entry per category (according to the recorded_date ) , one row per category to keep things tidy.
+After browsing through the archive documents and records for a while, SQLaus wonders: &#x22;When were the different added to the categories? I wonder how far they spread out over time.&#x22;
+In order to find that out, he wants to see the first, and last entry per category (according to the recorded_date ) , one row per category to keep things tidy.
 
 Giving it some thought, SQLaus decides that the following columns should be displayed:
 - category
-- first_description
 - first_recorded_day
-- first_estimated_value
-- last_description
 - last_recorded_day
-- last_estimated_value
 
 Method hint: First, write the query for the first and last value to see if it work, then, wrap it again in a CTE or a subquery to use the values to join the other tables.</text>
             <sql-solution>WITH cat_first_last AS (
@@ -209,12 +206,8 @@ FROM CollectorArchive
 )
 SELECT
     cfl.category,
-    ca_first.description AS first_description,
     ca_first.recorded_day AS first_recorded_day,
-    ca_first.estimated_value AS first_estimated_value,
-    ca_last.description AS last_description,
     ca_last.recorded_day AS last_recorded_day,
-    ca_last.estimated_value AS last_estimated_value
 FROM cat_first_last AS cfl
 INNER JOIN CollectorArchive AS ca_first on cfl.first_entryid = ca_first.entryid
 INNER JOIN CollectorArchive AS ca_last on cfl.last_entryid = ca_last.entryid
@@ -222,7 +215,7 @@ INNER JOIN CollectorArchive AS ca_last on cfl.last_entryid = ca_last.entryid
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <text-scene>
-            <text>No clear trend seems to emerge. Some more recent items in the categories are more, and others are less valuable as it seems. Nevertheless, it is interesting to see. Perhaps there is a trend within each category.</text>
+            <text>No big differences emerge. It seems that for all categories the oldest and most recent items were added around the same time, implying there is no category which has been less active or of less recent interest to the Collector. Nevertheless, it is interesting to see.</text>
         </text-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 7: The Third-Rarest Standard
