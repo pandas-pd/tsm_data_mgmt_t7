@@ -34,110 +34,98 @@ Before SQLaus can bring order to the Collector&#x27;s records, he first needs to
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 1: Cataloguing the Inhabitants
 
-                The Collector first wants a stable archive order. SQLaus must assign a sequential
-                catalogue number to every inhabitant within each village, ordered alphabetically by
-                name.
+The Collector first wants a stable archive order. SQLaus must assign a sequential catalogue number to every inhabitant within each village, ordered alphabetically by name.
 
-                Tables: Inhabitant, Village
+Tables: Inhabitant, Village
 
-                Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
+Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
             <sql-solution>SELECT
-                v.name AS village_name,
-                i.name AS inhabitant_name,
-                ROW_NUMBER() OVER (
-                PARTITION BY i.villageid
-                ORDER BY i.name
-                ) AS catalogue_number
-                FROM Inhabitant i
-                INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
+    v.name AS village_name,
+    i.name AS inhabitant_name,
+    ROW_NUMBER() OVER (
+        PARTITION BY i.villageid
+        ORDER BY i.name
+    ) AS catalogue_number
+FROM Inhabitant i
+INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 2: Ranking the Most Valuable Curiosities
 
-                The Collector wants a global prestige ranking of all inhabitants by gold. If two
-                inhabitants have the same amount, they should share the same place, with gaps in the
-                following rank positions.
+The Collector wants a global prestige ranking of all inhabitants by gold. If two inhabitants have the same amount, they should share the same place, with gaps in the following rank positions.
 
-                Tables: Inhabitant, Village
+Tables: Inhabitant, Village
 
-                Functions: RANK() with ORDER BY</text>
+Functions: RANK() with ORDER BY</text>
             <sql-solution>SELECT
-                i.name AS inhabitant_name,
-                v.name AS village_name,
-                i.gold,
-                RANK() OVER (
-                ORDER BY i.gold DESC
-                ) AS prestige_rank
-                FROM Inhabitant i
-                INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
+    i.name AS inhabitant_name,
+    v.name AS village_name,
+    i.gold,
+    RANK() OVER (
+        ORDER BY i.gold DESC
+    ) AS prestige_rank
+FROM Inhabitant i
+INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 3: Compact Village Display
 
-                As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a
-                small but awkward problem. Whenever two inhabitants own the same amount of gold, the
-                ranking leaves gaps and makes the exhibition look untidy.
+As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a small but awkward problem. Whenever two inhabitants own the same amount of gold, the ranking leaves gaps and makes the exhibition look untidy.
 
-                &#x201C;That will not do,&#x201D; he says. &#x201C;Equal wealth may share a place,
-                but the list itself should remain compact.&#x201D;
+&#x201C;That will not do,&#x201D; he says. &#x201C;Equal wealth may share a place, but the list itself should remain compact.&#x201D;
 
-                The Collector therefore asks for a village-wise ranking of inhabitants by gold,
-                using consecutive rank numbers even when ties occur.
+The Collector therefore asks for a village-wise ranking of inhabitants by gold, using consecutive rank numbers even when ties occur.
 
-                The result should include:
-                - inhabitant_name
-                - village_name
-                - gold
-                - village_rank
+The result should include:
+- inhabitant_name
+- village_name
+- gold
+- village_rank
 
-                Tables: Inhabitant, Village
+Tables: Inhabitant, Village
 
-                Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
+Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
             <sql-solution>SELECT
-                i.name AS inhabitant_name,
-                v.name AS village_name,
-                i.gold,
-                DENSE_RANK() OVER (
-                PARTITION BY i.villageid
-                ORDER BY i.gold DESC
-                ) AS village_rank
-                FROM Inhabitant i
-                INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
+    i.name AS inhabitant_name,
+    v.name AS village_name,
+    i.gold,
+    DENSE_RANK() OVER (
+        PARTITION BY i.villageid
+        ORDER BY i.gold DESC
+    ) AS village_rank
+FROM Inhabitant i
+INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 4: Comparing Consecutive Acquisitions
 
-                The longer SQLaus studies the Archive, the clearer it becomes that the Collector
-                cared not only about isolated values, but about change over time. An acquisition
-                only reveals its place in the archive when it is compared with the one that came
-                before it in the same category.
+The longer SQLaus studies the Archive, the clearer it becomes that the Collector cared not only about isolated values, but about change over time. An acquisition only reveals its place in the archive when it is compared with the one that came before it in the same category.
 
-                To trace this development, the Collector asks SQLaus to place each entry beside the
-                estimated value of the previous acquisition in its category.
+To trace this development, the Collector asks SQLaus to place each entry beside the estimated value of the previous acquisition in its category.
 
-                For this, the output should contain:
-                - category
-                - recorded_day
-                - description
-                - estimated_value
-                - previous_estimated_value
+For this, the output should contain:
+- category
+- recorded_day
+- description
+- estimated_value
+- previous_estimated_value
 
-                Tables: CollectorArchive
+Tables: CollectorArchive
 
-                Functions: LAG() with PARTITION BY, ORDER BY</text>
+Functions: LAG() with PARTITION BY, ORDER BY</text>
             <sql-solution>SELECT
-                category,
-                recorded_day,
-                description,
-                estimated_value,
-                LAG(estimated_value) OVER (
-                PARTITION BY category
-                ORDER BY recorded_day, entryid
-                ) AS previous_estimated_value
-                FROM CollectorArchive;</sql-solution>
+    category,
+    recorded_day,
+    description,
+    estimated_value,
+    LAG(estimated_value) OVER (
+        PARTITION BY category
+        ORDER BY recorded_day, entryid
+    ) AS previous_estimated_value
+FROM CollectorArchive;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <manipulate-scene>
@@ -220,74 +208,64 @@ INNER JOIN CollectorArchive AS ca_last on cfl.last_entryid = ca_last.entryid
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 7: The Third-Rarest Standard
 
-                While studying the Archive, SQLaus noticed that the Collector does not compare items
-                randomly. Instead, he uses a fixed benchmark: the third entry in descending rarity
-                within each category.
+While studying the Archive, SQLaus noticed that the Collector does not compare items randomly. Instead, he uses a fixed benchmark: the third entry in descending rarity within each category.
 
-                &#x201C;This is the standard,&#x201D; SQLaus murmurs. &#x201C;Not the rarest&#x2026; but the point of balance.&#x201D;
-                To understand the Collector&#x27;s logic, SQLaus must display every archive entry
-                together with this benchmark value for its category. 
-                
-                To do so, he needs to display
-                the following columns:
-                - category
-                - description
-                - rarity_score
-                - third_highest_rarity (the third value in descending rarity order within the
-                category)
+&#x201C;This is the standard,&#x201D; SQLaus murmurs. &#x201C;Not the rarest&#x2026; but the point of balance.&#x201D;
+To understand the Collector&#x27;s logic, SQLaus must display every archive entry together with this benchmark value for its category.
 
-                Method hint: Work within each category, order entries by rarity descending, and
-                retrieve the third value as a constant reference for all rows.</text>
+To do so, he needs to display
+the following columns:
+- category
+- description
+- rarity_score
+- third_highest_rarity (the third value in descending rarity order within the
+category)
+
+Method hint: Work within each category, order entries by rarity descending, and retrieve the third value as a constant reference for all rows.</text>
             <sql-solution>SELECT
-                category,
-                description,
-                rarity_score,
-                NTH_VALUE(rarity_score, 3) OVER (
-                PARTITION BY category
-                ORDER BY rarity_score DESC, entryid
-                ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
-                ) AS third_highest_rarity
-                FROM CollectorArchive;</sql-solution>
+    category,
+    description,
+    rarity_score,
+    NTH_VALUE(rarity_score, 3) OVER (
+        PARTITION BY category
+        ORDER BY rarity_score DESC, entryid
+    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING
+    ) AS third_highest_rarity
+FROM CollectorArchive;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <text-scene>
             <text>The hidden benchmark appears at last.
 
-                SQLaus realizes that the Collector never focused only on extremes, but instead
-                compared every item against a stable internal standard.
+SQLaus realizes that the Collector never focused only on extremes, but instead compared every item against a stable internal standard.
 
-                &#x201C;You&#x27;re starting to understand,&#x201D; he murmurs.</text>
+&#x201C;You&#x27;re starting to understand,&#x201D; he murmurs.</text>
         </text-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 8: The Collector&#x27;s Prestige Tiers
 
-                The Collector now wants the archive to be easier to understand at a glance.
+The Collector now wants the archive to be easier to understand at a glance.
 
-                A long list of values is useful for experts, but visitors need structure. Each
-                category must therefore be divided into three prestige tiers based on estimated
-                value.
+A long list of values is useful for experts, but visitors need structure. Each category must therefore be divided into three prestige tiers based on estimated value.
 
-                SQLaus must split the entries of every category into three groups, ordering them
-                from highest to lowest value, so that each item receives a tier relative to others
-                in the same category.
+SQLaus must split the entries of every category into three groups, ordering them from highest to lowest value, so that each item receives a tier relative to others in the same category.
 
-                To do so, he needs to display the following columns:
-                - category
-                - description
-                - estimated_value
-                - prestige_tier
+To do so, he needs to display the following columns:
+- category
+- description
+- estimated_value
+- prestige_tier
 
-                Method hint: Work within each category, order by estimated value descending and
-                divide the rows into three groups.</text>
+Method hint: Work within each category, order by estimated value descending and divide the rows into three groups.</text>
             <sql-solution>SELECT
-                category,
-                description,
-                estimated_value,
-                NTILE(3) OVER (
-                PARTITION BY category
-                ORDER BY estimated_value DESC, entryid
-                ) AS prestige_tier
-                FROM CollectorArchive;</sql-solution>
+    category,
+    description,
+    estimated_value,
+    NTILE(3) OVER (
+        PARTITION BY category
+        ORDER BY estimated_value DESC, entryid
+    ) AS prestige_tier
+FROM CollectorArchive;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <text-scene>
