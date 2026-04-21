@@ -72,11 +72,11 @@ INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 3: Compact Village Display
 
-As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a small but awkward problem. Whenever two inhabitants own the same amount of gold, the ranking leaves gaps and makes the exhibition look untidy.
+As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a small but awkward problem. Whenever two inhabitants from the same village own the same amount of gold, the ranking leaves gaps and makes the exhibition look untidy.
 
 &#x201C;That will not do,&#x201D; he says. &#x201C;Equal wealth may share a place, but the list itself should remain compact.&#x201D;
 
-The Collector therefore asks for a village-wise ranking of inhabitants by gold, using consecutive rank numbers even when ties occur.
+The Collector therefore asks for a village-wise ranking of inhabitants by gold. Equal gold values should receive the same rank, but the rank numbers should remain consecutive.
 
 The result should include:
 - inhabitant_name
@@ -84,10 +84,8 @@ The result should include:
 - gold
 - village_rank
 
-Tables: Inhabitant, Village
-
-Functions: DENSE_RANK() with PARTITION BY, ORDER BY</text>
-            <sql-solution>SELECT
+Method hint: Work within each village, order inhabitants by gold descending, and use DENSE_RANK() to create a compact ranking without gaps.</text>
+    <sql-solution>SELECT
     i.name AS inhabitant_name,
     v.name AS village_name,
     i.gold,
@@ -99,35 +97,49 @@ FROM Inhabitant i
 INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
+        <text-scene>
+            <text>The village display falls neatly into place.
+
+SQLaus studies the compact ranks and nods. What had looked awkward before now reads like a proper exhibition list.
+
+&#x201C;Good,&#x201D; he says. &#x201C;Now the pattern is clear at a glance.&#x201D;</text>
+        </text-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
-            <text>Mission 4: Comparing Consecutive Acquisitions
+            <text>Mission 4: Tracing Village Contribution Values
 
-The longer SQLaus studies the Archive, the clearer it becomes that the Collector cared not only about isolated values, but about change over time. An acquisition only reveals its place in the archive when it is compared with the one that came before it in the same category.
+The longer SQLaus studies the Archive, the clearer it becomes that the Collector cared not only about isolated objects, but also about how each village contributed to the archive over time.
 
-To trace this development, the Collector asks SQLaus to place each entry beside the estimated value of the previous acquisition in its category.
+To inspect this contribution history, SQLaus wants to follow the archive entries village by village. For every contribution, he compares its estimated value with the estimated value of the previous contribution from the same village.
+
+This helps him see how the value of each village&#x27;s contributions changed from one recorded entry to the next.
 
 For this, the output should contain:
-- category
+- village_name
 - recorded_day
 - description
 - estimated_value
-- previous_estimated_value
+- value_change_from_previous
 
-Tables: CollectorArchive
-
-Functions: LAG() with PARTITION BY, ORDER BY</text>
-            <sql-solution>SELECT
-    category,
-    recorded_day,
-    description,
-    estimated_value,
-    LAG(estimated_value) OVER (
-        PARTITION BY category
-        ORDER BY recorded_day, entryid
-    ) AS previous_estimated_value
-FROM CollectorArchive;</sql-solution>
+Method hint: Join the archive with the villages, work within each village, order the entries by recorded day and entryid, and use LAG() to compare the current estimated value with the previous one.</text>
+    <sql-solution>SELECT
+    v.name AS village_name,
+    ca.recorded_day,
+    ca.description,
+    ca.estimated_value,
+    ca.estimated_value - LAG(ca.estimated_value) OVER (
+        PARTITION BY ca.villageid
+        ORDER BY ca.recorded_day, ca.entryid
+    ) AS value_change_from_previous
+FROM CollectorArchive ca
+INNER JOIN Village v ON ca.villageid = v.villageid
+ORDER BY ca.villageid, ca.recorded_day, ca.entryid;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
+        <text-scene>
+            <text>The village contribution history becomes visible.
+
+SQLaus follows the archive entries village by village and compares each contribution with the previous one from the same village. Some values rise sharply, while others fall again.</text>
+        </text-scene>
         <manipulate-scene>
             <text>Mission 5: Updating the records with the next Acquisition.
 
@@ -167,7 +179,7 @@ where ca.next_entryid = ne.next_entryid;</sql-check>
             <text>Mission 6: Item recency in categories
 
 After browsing through the archive documents and records for a while, SQLaus wonders: &#x22;When were the different added to the categories? I wonder how far they spread out over time.&#x22;
-In order to find that out, he wants to see the first, and last entry per category (according to the recorded_date ) , one row per category to keep things tidy.
+In order to find that out, he wants to see the first, and last entry per category (according to the recorded_day) , one row per category to keep things tidy.
 
 Giving it some thought, SQLaus decides that the following columns should be displayed:
 - category
