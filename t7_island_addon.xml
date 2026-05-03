@@ -34,7 +34,18 @@ Before SQLaus can bring order to the Collector&#x27;s records, he first needs to
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 1: Cataloguing the Inhabitants
 
+After reading the Collector&#x2019;s note, SQLaus realizes that the archive is not meant to simply list information, but to impose a clear and consistent structure.
+
+&#x201C;To understand the archive,&#x201D; he says. &#x201C;I must first bring order to the inhabitants themselves.&#x201D;
+
 The Collector first wants a stable archive order. SQLaus must assign a sequential catalogue number to every inhabitant within each village, ordered alphabetically by name.
+
+This ensures that each village has its own internal structure and that no ambiguity remains in how inhabitants are organized.
+
+The result should include:
+- village_name
+- inhabitant_name
+- catalogue_number
 
 Tables: Inhabitant, Village
 
@@ -53,7 +64,19 @@ INNER JOIN Village v ON i.villageid = v.villageid;</sql-solution>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 2: Ranking the Most Valuable Curiosities
 
+With the inhabitants now properly ordered within their villages, SQLaus turns his attention to the broader structure of the archive.
+
+&#x201C;Order alone is not enough,&#x201D; he notes. &#x201C;The Collector clearly values comparison.&#x201D;
+
 The Collector wants a global prestige ranking of all inhabitants by gold. If two inhabitants have the same amount, they should share the same place, with gaps in the following rank positions.
+
+This ranking reveals the relative importance of inhabitants across the entire archive, highlighting those of highest value.
+
+The result should include:
+- inhabitant_name
+- village_name
+- gold
+- prestige_rank
 
 Tables: Inhabitant, Village
 
