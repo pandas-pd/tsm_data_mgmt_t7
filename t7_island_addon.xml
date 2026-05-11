@@ -27,7 +27,7 @@ He folded the note and looked back at the catalogue pages. &#x201C;To analyze th
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 0: Opening the Collector&#x27;s Archive
 
-Before SQLaus can bring order to the Collector&#x27;s records, he first needs to inspect the archive itself. Display the complete CollectorArchive table so he can study the available entries, categories, values, and recorded dates.</text>
+Before SQLaus can bring order to the Collector&#x27;s records, he first needs to inspect the archive itself. Display the complete collector_archive table so he can study the available entries, categories, values, and recorded dates.</text>
             <sql-solution>SELECT * FROM collector_archive;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
@@ -47,7 +47,7 @@ The result should include:
 - inhabitant_name
 - catalogue_number
 
-Tables: Inhabitant, Village
+Tables: inhabitant, village
 
 Functions: ROW_NUMBER() with PARTITION BY, ORDER BY</text>
             <sql-solution>SELECT
@@ -78,7 +78,7 @@ The result should include:
 - gold
 - prestige_rank
 
-Tables: Inhabitant, Village
+Tables: inhabitant, village
 
 Functions: RANK() with ORDER BY</text>
             <sql-solution>SELECT
@@ -93,7 +93,7 @@ INNER JOIN village v ON i.villageid = v.villageid;</sql-solution>
             <sql-placeholder></sql-placeholder>
         </select-scene>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
-            <text>Mission 3: Compact village Display
+            <text>Mission 3: Compact Village Display
 
 As SQLaus prepares a public display of the Collector&#x2019;s notes, he notices a small but awkward problem. Whenever two inhabitants from the same village own the same amount of gold, the ranking leaves gaps and makes the exhibition look untidy.
 
@@ -203,15 +203,15 @@ where ca.next_entryid = ne.next_entryid;</sql-check>
         <select-scene is-row-order-relevant="false" is-col-order-relevant="false" are-col-names-relevant="false">
             <text>Mission 6: Item recency in categories
 
-After browsing through the archive documents and records for a while, SQLaus wonders: &#x22;When were the different added to the categories? I wonder how far they spread out over time.&#x22;
-In order to find that out, he wants to see the first, and last entry per category (according to the recorded_date) , one row per category to keep things tidy.
+After browsing through the archive documents and records for a while, SQLaus wonders: &#x22;When were the different entries added to the categories? I wonder how far they spread out over time.&#x22;
+In order to find that out, he wants to see the first and last entry per category (according to the recorded_day), one row per category to keep things tidy.
 
 Giving it some thought, SQLaus decides that the following columns should be displayed:
 - category
 - first_recorded_day
 - last_recorded_day
 
-Method hint: First, write the query for the first and last value to see if it work, then, wrap it again in a CTE or a subquery to use the values to join the other tables.</text>
+Method hint: First, write the query for the first and last value to see if it works, then wrap it again in a CTE or a subquery to use the values to join the other tables.</text>
             <sql-solution>WITH cat_first_last AS (
 
     SELECT DISTINCT
@@ -232,7 +232,7 @@ FROM collector_archive
 SELECT
     cfl.category,
     ca_first.recorded_day AS first_recorded_day,
-    ca_last.recorded_day AS last_recorded_day,
+    ca_last.recorded_day AS last_recorded_day
 FROM cat_first_last AS cfl
 INNER JOIN collector_archive AS ca_first on cfl.first_entryid = ca_first.entryid
 INNER JOIN collector_archive AS ca_last on cfl.last_entryid = ca_last.entryid
@@ -258,7 +258,7 @@ the following columns:
 - third_highest_rarity (the third value in descending rarity order within the
 category)
 
-MMethod hint: Use a window function to work within each category by partitioning the data with PARTITION BY and ordering entries by rarity_score in descending order. Then apply a function like NTH_VALUE() to retrieve the third value in this order. Make sure the window frame includes all rows in the partition so the result is the same for every row. Remember, you are not filtering rows but adding the third highest rarity as a constant reference for each category.</text>
+Method hint: Use a window function to work within each category by partitioning the data with PARTITION BY and ordering entries by rarity_score in descending order. Then apply a function like NTH_VALUE() to retrieve the third value in this order. Make sure the window frame includes all rows in the partition so the result is the same for every row. Remember, you are not filtering rows but adding the third highest rarity as a constant reference for each category.</text>
             <sql-solution>SELECT
     category,
     description,
