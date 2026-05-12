@@ -317,15 +317,15 @@ SQLaus leans back and smiles.
             <text>Congratulations! You solved all missions and helped SQLaus bring order to the Collector&#x27;s archive.</text>
         </text-scene>
         <text-scene>
-            <text>You have successfully applied window functions to uncover patterns within the data:
+            <text>You have successfully applied window functions to uncover patterns within the data. Here is a short summary of the techniques you used during this game:
 - assigning ordered positions within groups
 - ranking and comparing values
 - analyzing changes over time
 - retrieving specific reference points within partitions
 - dividing data into meaningful tiers
 
-Through this, you did not simply query the archive &#x2014; you understood how to work with
-                data in context.</text>
+Through this game, you did not simply query the archive &#x2014; you understood how to work with
+                the data in context.</text>
         </text-scene>
     </scenes>
     <initial-sql-script>CREATE TYPE inhabitant_state AS ENUM (&#x27;friendly&#x27;,
