@@ -1,5 +1,7 @@
 # Presentation
 
+Meetup: Lagerstrasse 41 @ Wednesday, 08:10
+
 - Theory (Joël, 3 min):
     - What window funcitons do (See picture 1)
     - Syntax
